@@ -1,0 +1,41 @@
+name: Evaluate Model (Manual CML)
+
+on:
+  workflow_dispatch:  # Enables manual trigger
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: 🧪 Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install cml scikit-learn pandas joblib feast
+
+      - name: 📊 Run evaluation
+        run: |
+          python src/evaluate.py
+
+      - name: 📤 Upload evaluation report
+        uses: actions/upload-artifact@v3
+        with:
+          name: eval_report
+          path: reports/eval_report.txt
+
+      - name: 💬 CML Comment
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "## 📊 Evaluation Report" > report.md
+          cat reports/eval_report.txt >> report.md
+          cml comment create report.md
+

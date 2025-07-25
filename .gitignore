@@ -1,0 +1,11 @@
+.dvc/
+__pycache__/
+*.pyc
+data/processed/*.csv
+.ipynb_checkpoints/
+venv
+__pycache__/
+*.pyc
+*.pyo
+/data
+feature_repo/data
